@@ -1,0 +1,10 @@
+extends layouts/default
+
+block content
+  div(data-ng-view)
+  script(type="text/javascript").
+    window.csrf = '!{token}';
+    window.loowidVersion = '!{version}';
+    window.loowidNode = '!{node}';
+    window.wsocket = { host: '!{host}', port: '!{port}' };
+    window.usrid = '!{usrid}';

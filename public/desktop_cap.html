@@ -1,0 +1,77 @@
+<script>
+// https://github.com/muaz-khan/WebRTC-Experiment/tree/master/DetectRTC
+var DetectRTC = {};
+
+var screenCallback;
+
+DetectRTC.screen = {
+    chromeMediaSource: 'screen',
+    getSourceId: function (extensionId,callback) {
+        screenCallback = callback;
+		var extMsg = 'get-sourceId-from-ext-' + extensionId;
+        window.postMessage(extMsg, '*');
+    },
+    onMessageCallback: function (data) {
+        // "cancel" button is clicked
+        if (data == 'PermissionDeniedError') {	
+            DetectRTC.screen.chromeMediaSource = 'PermissionDeniedError';
+            if (screenCallback) return screenCallback('PermissionDeniedError');
+            else throw new Error('PermissionDeniedError');
+        }
+
+        // extension notified his presence
+        if (data == 'loowid-extension-loaded') {
+            DetectRTC.screen.chromeMediaSource = 'desktop';
+        }
+
+        // extension shared temp sourceId
+        if (data.sourceId) {
+            DetectRTC.screen.sourceId = data.sourceId;
+            if (screenCallback) screenCallback(DetectRTC.screen.sourceId);
+        }
+    },
+    getChromeExtensionStatus: function (extensionId,callback) {
+     
+        var image = document.createElement('img');
+        image.src = 'chrome-extension://' + extensionId + '/hero.png';
+        image.onload = function () {
+            DetectRTC.screen.chromeMediaSource = 'screen';
+			var instMsg = 'is-installed-' + extensionId;
+            window.postMessage(instMsg, '*');
+            setTimeout(function () {
+                if (DetectRTC.screen.chromeMediaSource == 'screen') {
+                    callback('installed-disabled');
+                } else callback('installed-enabled');
+            }, 2000);
+        };
+        image.onerror = function () {
+            callback('not-installed');
+        };
+    }
+};
+
+window.addEventListener('message', function (event) {
+    if (!event.data || !(typeof event.data == 'string' || event.data.sourceId || event.data.captureSourceId)) return;
+    if (event.data.captureSourceId) captureSourceId(event.data.captureSourceId);
+
+    DetectRTC.screen.onMessageCallback(event.data);
+});
+
+function captureSourceId(extensionId) {
+    // check if desktop-capture extension installed.
+    DetectRTC.screen.getChromeExtensionStatus(extensionId, function (status) {
+        if (status != 'installed-enabled') {
+            window.parent.postMessage({
+                chromeExtensionStatus: status
+            }, '*');
+            return;
+        }
+
+        DetectRTC.screen.getSourceId(extensionId,function (sourceId) {
+            window.parent.postMessage({
+                chromeMediaSourceId: sourceId
+            }, '*');
+        });
+    });
+}
+</script>

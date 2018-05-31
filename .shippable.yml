@@ -1,0 +1,24 @@
+language: node_js
+
+branches:
+  only:
+    - master
+
+#commit_container: 
+#	- loowid/loowid
+
+node_js:
+  - "0.10"
+
+services:
+  - mongodb  
+
+before_script:
+  - npm install -g grunt-cli
+  - npm install -g istanbul
+  - mkdir -p shippable/testresults
+  - mkdir -p shippable/codecoverage
+  
+after_success:
+  - cp -R ./reports ./shippable/testresults
+  - istanbul report cobertura --dir  ./shippable/codecoverage/ 

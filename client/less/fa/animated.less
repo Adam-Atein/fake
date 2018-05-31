@@ -1,0 +1,48 @@
+// Animated Icons
+// --------------------------
+
+.@{fa-css-prefix}-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
+          animation: fa-spin 2s infinite linear;
+}
+
+.@{fa-css-prefix}-pulse {
+  -webkit-animation: fa-spin 1s infinite steps(8);
+          animation: fa-spin 1s infinite steps(8);
+}
+
+.@{fa-css-prefix}-blink {
+   -webkit-animation: fa-blink 3s infinite;
+   -moz-animation: fa-blink 3s infinite;
+   -ms-animation: fa-blink 3s infinite;
+   -o-animation: fa-blink 3s infinite;
+   animation: fa-blink 3s infinite;
+}
+
+@keyframes fa-blink {
+     0% { opacity: 1; }
+     50% { opacity: 0.2; }
+     100% { opacity: 1; }
+ }
+
+@-webkit-keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg);
+  }
+}
+
+@keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg);
+  }
+}
